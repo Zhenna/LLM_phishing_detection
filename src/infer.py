@@ -12,8 +12,8 @@ from transformers import (
     AutoTokenizer,
 )
 
-from preprocess import transform_df, encode_df, init_nltk
-from get_data import get_raw_data, train_val_test_split
+from src.preprocess import transform_df, encode_df, init_nltk
+from src.get_data import get_raw_data, train_val_test_split
 
 BEST_BASELINE_MODEL = {
     "NB": (MultinomialNB(), 300, "outputs/model/NB.pkl"),

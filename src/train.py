@@ -21,13 +21,12 @@ import time
 import pandas as pd
 import pickle
 
-from get_data import get_raw_data, train_val_test_split
-from utils_and_constants import (
+from src.get_data import get_raw_data, train_val_test_split
+from src.utils_and_constants import (
     SCORING,
-    plot_loss,
     save_scores,
 )
-from preprocess import transform_df, encode_df, tokenize, init_nltk
+from src.preprocess import transform_df, encode_df, tokenize, init_nltk
 
 
 MODELS = {
@@ -82,7 +81,7 @@ def get_trainer(model, dataset, tokenizer):
         per_device_train_batch_size=16,
         per_device_eval_batch_size=8,
         learning_rate=5e-5,
-        num_train_epochs=1, #10, # use 1 epoch to debug
+        num_train_epochs=5, #10, # use 1 epoch to debug
         evaluation_strategy="epoch",
         save_strategy="epoch",
         load_best_model_at_end=True,
@@ -143,7 +142,6 @@ def train_llms(seed=123, train_size=0.8, test_set="test", dataset_name="data.csv
         scores.loc[model_name]["training_time"] = end - start
         log = pd.DataFrame(trainer.state.log_history)
         log.to_csv(f"outputs/csv/loss_{model_name}_{experiment}.csv")
-        plot_loss(experiment, dataset_name, model_name)
 
         # Test model
         start = time.time()

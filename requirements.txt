@@ -1,0 +1,14 @@
+scikit-learn
+pandas
+datasets
+nltk
+transformers
+xgboost
+lightgbm
+sentence_transformers
+setfit
+matplotlib
+scienceplots
+accelerate
+evaluate
+flask
