@@ -1,0 +1,7 @@
+**/.git
+**/.DS_Store
+**/node_modules
+src/delete.py
+experiments/*
+src/__pycache__
+__pycache__

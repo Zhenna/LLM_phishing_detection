@@ -81,7 +81,7 @@ def get_trainer(model, dataset, tokenizer):
         per_device_train_batch_size=16,
         per_device_eval_batch_size=8,
         learning_rate=5e-5,
-        num_train_epochs=5, #10, # use 1 epoch to debug
+        num_train_epochs=10, # use 1 epoch to debug
         evaluation_strategy="epoch",
         save_strategy="epoch",
         load_best_model_at_end=True,
