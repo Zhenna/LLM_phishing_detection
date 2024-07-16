@@ -86,6 +86,7 @@ def get_trainer(model, dataset):
         save_strategy="epoch",
         load_best_model_at_end=True,
         save_total_limit=2,  # 10, # takes space
+        no_cuda=True
         # save_strategy = "no", # “epoch” or “steps”
         # evaluation_strategy = “epoch” or “steps”,
     )
