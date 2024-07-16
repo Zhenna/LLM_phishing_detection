@@ -35,21 +35,22 @@ LLMS = {
 
 class make_inference():
 
-    def __init__(self, user_input):
+    def __init__(self, user_input, dataset_name="data.csv"):
         self.text_input = user_input
+        self.dataset_name = dataset_name
 
     def process_input(self):
         """convert text to matrix for baseline model only"""
         df_infer = pd.DataFrame(data={"text": self.text_input}, index=[0])
         return transform_df(df_infer)
 
-    def best_baseline(self, train_size=0.8, dataset_name="data.csv", model="XGBoost"):
+    def best_baseline(self, train_size=0.8, model="XGBoost"):
         """train (or load saved model) and predict"""
 
         init_nltk()
 
         # get data
-        df = get_raw_data(dataset_name)
+        df = get_raw_data(self.dataset_name)
         df = transform_df(df)
         (df_train, _), _ = train_val_test_split(
             df, train_size=train_size, has_val=False
@@ -58,9 +59,6 @@ class make_inference():
         # vectorize data 
         encoder = TfidfVectorizer(max_features=BEST_BASELINE_MODEL[model][1])
         _, _, encoder = encode_df(df_train, encoder)
-
-        # train model
-        # model = BEST_BASELINE_MODEL["XGBoost"][0].fit(X_train, y_train)
         
         # load model
         model = pickle.load(open(BEST_BASELINE_MODEL[model][2],'rb'))

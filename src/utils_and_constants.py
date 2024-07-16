@@ -22,7 +22,7 @@ SCORING = {
 def save_scores(experiment: str, index: str, values: dict) -> None:
     """Log scores for individual models in the corresponding csv file"""
     llms = [
-        "BERT",
+        # "BERT",
         "RoBERTa",
     ]
     models = ["NB", "LR", "KNN", "SVM", "XGBoost"]

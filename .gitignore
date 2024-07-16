@@ -163,3 +163,4 @@ cython_debug/
 raw_data/*
 */delete.py
 experiments/
+outputs/*

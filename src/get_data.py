@@ -4,14 +4,15 @@ from sklearn.model_selection import train_test_split
 
 def get_raw_data(csv_name, label_col_name="gen_label", text_col_name="Messages"):
     df = pd.read_csv(f"raw_data/{csv_name}")
-    df["text"] = df[text_col_name]
+    if text_col_name != "text":
+        df["text"] = df[text_col_name]
     df["label"] = df[label_col_name]
     df = df.dropna()
     df = df.drop_duplicates()
     print(f"""raw data breakdown by label:\n
           {df[label_col_name].value_counts()}
         """)
-    return df.drop(columns=[label_col_name, text_col_name]) 
+    return df[['text','label']]
 
 def train_val_test_split(df, label_col_name="label", train_size=0.8, has_val=True):
     """Return a tuple (DataFrame, DatasetDict) with a custom train/val/split"""

@@ -6,7 +6,7 @@ from transformers import (
     Trainer,
 )
 
-from sklearn.naive_bayes import  MultinomialNB 
+from sklearn.naive_bayes import MultinomialNB
 from sklearn.linear_model import LogisticRegression
 from sklearn.neighbors import KNeighborsClassifier
 from xgboost import XGBClassifier
@@ -37,7 +37,7 @@ MODELS = {
     "XGBoost": (XGBClassifier(learning_rate=0.01, n_estimators=150), 350),
 }
 
- 
+
 LLMS = {
     "RoBERTa": (
         AutoModelForSequenceClassification.from_pretrained(
@@ -56,7 +56,7 @@ class EvalOnTrainCallback(TrainerCallback):
         super().__init__()
         self._trainer = trainer
 
-    def on_epoch_end(self, args, state, control, **kwargs):
+    def on_epoch_end(self, control, **kwargs):
         if control.should_evaluate:
             control_train = copy.deepcopy(control)
             self._trainer.evaluate(
@@ -65,7 +65,7 @@ class EvalOnTrainCallback(TrainerCallback):
             return control_train
 
 
-def get_trainer(model, dataset, tokenizer):
+def get_trainer(model, dataset):
     """Return a trainer object for transformer models."""
 
     def compute_metrics(y_pred):
@@ -81,11 +81,11 @@ def get_trainer(model, dataset, tokenizer):
         per_device_train_batch_size=16,
         per_device_eval_batch_size=8,
         learning_rate=5e-5,
-        num_train_epochs=10, # use 1 epoch to debug
+        num_train_epochs=10,  # use 1 epoch to debug
         evaluation_strategy="epoch",
         save_strategy="epoch",
         load_best_model_at_end=True,
-        save_total_limit=2, # 10, # takes space
+        save_total_limit=2,  # 10, # takes space
         # save_strategy = "no", # “epoch” or “steps”
         # evaluation_strategy = “epoch” or “steps”,
     )
@@ -94,7 +94,7 @@ def get_trainer(model, dataset, tokenizer):
         model=model,
         args=training_args,
         train_dataset=dataset["train"],
-        eval_dataset=dataset["val"],
+        eval_dataset=dataset["test"],
         compute_metrics=compute_metrics,
     )
     trainer.add_callback(EvalOnTrainCallback(trainer))
@@ -106,7 +106,14 @@ def predict(trainer, dataset):
     return trainer.predict(dataset).predictions.argmax(axis=-1)
 
 
-def train_llms(seed=123, train_size=0.8, test_set="test", dataset_name="data.csv"):
+def train_llms(
+    label_col_name: str,
+    text_col_name: str,
+    seed=123,
+    train_size=0.8,
+    test_set="test",
+    dataset_name="data.csv",
+):
     """Train the large language model."""
 
     scores = pd.DataFrame(
@@ -115,20 +122,16 @@ def train_llms(seed=123, train_size=0.8, test_set="test", dataset_name="data.csv
     )
 
     # Main loop
-    df = get_raw_data(dataset_name)
-    _, dataset = train_val_test_split(
-        df, train_size=train_size, has_val=True
-    )
+    df = get_raw_data(csv_name=dataset_name, label_col_name=label_col_name, text_col_name=text_col_name)
+    _, dataset = train_val_test_split(df, train_size=train_size, has_val=False)
 
     # Name experiment
-    experiment = (
-        f"llm_{dataset_name}_{test_set}_{train_size}_train_seed_{seed}"
-    )
+    experiment = f"llm_{dataset_name}_{test_set}_{train_size}_train_seed_{seed}"
 
     # Train, evaluate, test
     for model_name, (model, tokenizer) in LLMS.items():
         tokenized_dataset = tokenize(dataset, tokenizer)
-        trainer = get_trainer(model, tokenized_dataset, tokenizer)
+        trainer = get_trainer(model, tokenized_dataset)
 
         # Train model
         start = time.time()
@@ -137,7 +140,7 @@ def train_llms(seed=123, train_size=0.8, test_set="test", dataset_name="data.csv
 
         # Save model
         trainer.save_model("outputs/model/roberta-trained")
-        
+
         # Log Score
         scores.loc[model_name]["training_time"] = end - start
         log = pd.DataFrame(trainer.state.log_history)
@@ -145,9 +148,7 @@ def train_llms(seed=123, train_size=0.8, test_set="test", dataset_name="data.csv
 
         # Test model
         start = time.time()
-        predictions = predict(
-            trainer, tokenized_dataset[test_set]
-        )
+        predictions = predict(trainer, tokenized_dataset[test_set])
         end = time.time()
 
         for score_name, score_fn in SCORING.items():
@@ -156,15 +157,20 @@ def train_llms(seed=123, train_size=0.8, test_set="test", dataset_name="data.csv
             )
 
         scores.loc[model_name]["inference_time"] = end - start
-        save_scores(
-            experiment, model_name, scores.loc[model_name].to_dict()
-        )
+        save_scores(experiment, model_name, scores.loc[model_name].to_dict())
 
     # Display scores
     print(scores)
 
 
-def train_baselines(seed=123, train_size=0.8, test_set="test", dataset_name="data.csv"):
+def train_baselines(
+    label_col_name: str,
+    text_col_name: str,
+    seed=123,
+    train_size=0.8,
+    test_set="test",
+    dataset_name="data.csv",
+):
     """Train all the baseline models."""
     init_nltk()
 
@@ -175,16 +181,16 @@ def train_baselines(seed=123, train_size=0.8, test_set="test", dataset_name="dat
     )
 
     # Prepare data for training
-    df = get_raw_data(dataset_name)
+    df = get_raw_data(
+        csv_name=dataset_name, label_col_name=label_col_name, text_col_name=text_col_name
+    )
     df = transform_df(df)
-    (df_train, df_val, df_test), _ = train_val_test_split(
-        df, train_size=train_size, has_val=True
+    (df_train, df_test), _ = train_val_test_split(
+        df, train_size=train_size, has_val=False
     )
 
     # Name experiment
-    experiment = (
-        f"ml_{dataset_name}_{test_set}_{train_size}_train_seed_{seed}"
-    )
+    experiment = f"ml_{dataset_name}_{test_set}_{train_size}_train_seed_{seed}"
 
     # Cross-validate and test every model
     for model_name, (model, max_iter) in MODELS.items():
@@ -204,9 +210,7 @@ def train_baselines(seed=123, train_size=0.8, test_set="test", dataset_name="dat
                 n_jobs=-1,
             )
             for score_name, score_fn in SCORING.items():
-                scores.loc[model_name][score_name] = cv[
-                    f"test_{score_name}"
-                ].mean()
+                scores.loc[model_name][score_name] = cv[f"test_{score_name}"].mean()
 
         # Evaluate model on test set
         if test_set == "test":
@@ -221,16 +225,12 @@ def train_baselines(seed=123, train_size=0.8, test_set="test", dataset_name="dat
 
             scores.loc[model_name]["inference_time"] = end - start
             for score_name, score_fn in SCORING.items():
-                scores.loc[model_name][score_name] = score_fn(
-                    y_pred, y_test
-                )
+                scores.loc[model_name][score_name] = score_fn(y_pred, y_test)
 
-        save_scores(
-            experiment, model_name, scores.loc[model_name].to_dict()
-        )
+        save_scores(experiment, model_name, scores.loc[model_name].to_dict())
 
         # save model
-        pickle.dump(model, open(f'outputs/model/{model_name}.pkl','wb'))
+        pickle.dump(model, open(f"outputs/model/{model_name}.pkl", "wb"))
 
     # Display scores
     print(scores)
