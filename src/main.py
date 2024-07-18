@@ -2,7 +2,7 @@ from pathlib import Path
 import argparse
 
 from train import train_baselines, train_llms
-# from infer import make_inference
+from infer import make_inference
 
 
 def getArgs():
@@ -62,8 +62,7 @@ def getArgs():
 
 if __name__ == "__main__":
 
-    # Path("outputs/csv").mkdir(parents=True, exist_ok=True)
-    # Path("outputs/png").mkdir(parents=True, exist_ok=True)
+    Path("outputs/csv").mkdir(parents=True, exist_ok=True)
     Path("outputs/scores").mkdir(parents=True, exist_ok=True)
     Path("outputs/model").mkdir(parents=True, exist_ok=True)
 
@@ -74,19 +73,12 @@ if __name__ == "__main__":
     TEXT_COL_NAME = arg.text_col_name
     TEXT_INPUT = arg.text_input
 
-    print(
-        f"""
-        DATASET_NAME: {arg.csv_name}
-        LABEL_COL_NAME: {arg.label_col_name}
-        TEXT_COL_NAME: {arg.text_col_name}
-        """
-    )
+    print(TEXT_INPUT)
 
     if arg.task == "train":
         if arg.model_type == "baseline":
             print("training baseline models ...")
             train_baselines(
-                seed=333,
                 dataset_name=DATASET_NAME,
                 label_col_name=LABEL_COL_NAME,
                 text_col_name=TEXT_COL_NAME,
@@ -94,8 +86,6 @@ if __name__ == "__main__":
         elif arg.model_type == "LLM":
             print("train LLM model")
             train_llms(
-                seed=123,
-                train_size=0.8,
                 dataset_name=DATASET_NAME,
                 label_col_name=LABEL_COL_NAME,
                 text_col_name=TEXT_COL_NAME,
@@ -104,10 +94,16 @@ if __name__ == "__main__":
     elif arg.task == "infer":
         if arg.model_type == "baseline":
             pred = make_inference(
-                user_input=TEXT_INPUT, dataset_name=DATASET_NAME
+                user_input=TEXT_INPUT,
+                dataset_name=DATASET_NAME,
+                label_col_name=LABEL_COL_NAME,
+                text_col_name=TEXT_COL_NAME,
             ).best_baseline()
         elif arg.model_type == "LLM":
             pred = make_inference(
-                user_input=TEXT_INPUT, dataset_name=DATASET_NAME
+                user_input=TEXT_INPUT,
+                dataset_name=DATASET_NAME,
+                label_col_name=LABEL_COL_NAME,
+                text_col_name=TEXT_COL_NAME,
             ).best_llm()
         print(pred)

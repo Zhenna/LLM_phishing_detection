@@ -2,7 +2,7 @@ import pandas as pd
 import datasets
 from sklearn.model_selection import train_test_split
 
-def get_raw_data(csv_name, label_col_name="gen_label", text_col_name="Messages"):
+def get_raw_data(csv_name, label_col_name, text_col_name):
     df = pd.read_csv(f"raw_data/{csv_name}")
     if text_col_name != "text":
         df["text"] = df[text_col_name]
@@ -22,7 +22,7 @@ def train_val_test_split(df, label_col_name="label", train_size=0.8, has_val=Tru
 
     df = df.sample(frac=1, random_state=0)
     df_train, df_test = train_test_split(
-        df, test_size=1 - train_size, stratify=df[label_col_name]
+        df, train_size=train_size, stratify=df[label_col_name], random_state=333
     )
 
     if has_val:

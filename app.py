@@ -25,23 +25,6 @@ def predict():
 
     return render_template('predict.html', message=text, pred=pred, is_phising=outcome)
 
-# @app.route('/predict2json', methods=['POST'])
-# def predict2json():
-#     """make an inference using either LLM or xgboost"""
-
-#     # Retrieve the text from index page
-#     text = request.get_json()
-
-#     # make inference
-#     pred = make_inference(text).best_llm()
-#     # pred = make_inference(text).best_baseline()
-
-#     result = {
-#         "is_phishing": pred
-#     }
-
-#     return jsonify(result)
-
 if __name__ == '__main__':
     # app.run(debug=True) 
     app.run(host="0.0.0.0", port=5000)

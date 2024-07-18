@@ -56,7 +56,7 @@ class EvalOnTrainCallback(TrainerCallback):
         super().__init__()
         self._trainer = trainer
 
-    def on_epoch_end(self, control, **kwargs):
+    def on_epoch_end(self, args, state, control, **kwargs):
         if control.should_evaluate:
             control_train = copy.deepcopy(control)
             self._trainer.evaluate(
@@ -167,7 +167,6 @@ def train_llms(
 def train_baselines(
     label_col_name: str,
     text_col_name: str,
-    seed=123,
     train_size=0.8,
     test_set="test",
     dataset_name="data.csv",
@@ -191,7 +190,7 @@ def train_baselines(
     )
 
     # Name experiment
-    experiment = f"ml_{dataset_name}_{test_set}_{train_size}_train_seed_{seed}"
+    experiment = f"ml_{dataset_name}_baseline"
 
     # Cross-validate and test every model
     for model_name, (model, max_iter) in MODELS.items():

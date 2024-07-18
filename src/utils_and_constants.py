@@ -1,6 +1,5 @@
 import matplotlib.pyplot as plt
 from pathlib import Path
-import scienceplots
 import pandas as pd
 from sklearn.metrics import (
     f1_score,
@@ -9,7 +8,6 @@ from sklearn.metrics import (
     accuracy_score,
 )
 
-plt.style.use("science")
 
 SCORING = {
     "f1": f1_score,
@@ -22,7 +20,6 @@ SCORING = {
 def save_scores(experiment: str, index: str, values: dict) -> None:
     """Log scores for individual models in the corresponding csv file"""
     llms = [
-        # "BERT",
         "RoBERTa",
     ]
     models = ["NB", "LR", "KNN", "SVM", "XGBoost"]

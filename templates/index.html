@@ -1,39 +1,50 @@
 <!DOCTYPE html>
 <html>
+
 <head>
-    <style>
-        h1 {text-align: center;}
-        h3 {text-align: center;}
-        div {text-align: center;}
-    </style>
+  <style>
+    h1 {
+      text-align: center;
+    }
+
+    h3 {
+      text-align: center;
+    }
+
+    div {
+      text-align: center;
+    }
+  </style>
   <!-- Required meta tags -->
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
-    <title>Ethlas Case Study - Zhenna Lu</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+  <title>LLM Web App - Zhenna Lu</title>
 </head>
+
 <body>
   <div class="container">
 
     <div class="col-lg-12">
-      <center><h1 style="padding:30px;font-weight: 600 !important;font-size: 3.2em">WEB3 PHISHING DETECTION APP</h1></center>
+      <center>
+        <h1 style="padding:30px;font-weight: 600 !important;font-size: 3.2em">WEB3 PHISHING DETECTION APP</h1>
+      </center>
     </div>
 
-   <div class="col-lg-12">
-      <center><form  class="form-inline" action = "/predict" method = "post" enctype="multipart/form-data">
-        <center><h4>Enter the message here:</h4></center>
-        <textarea rows="5" cols="60" style="font-size: 12pt" name="message"></textarea><br> 
-          <input type = "submit" class="btn btn-success" value="Predict">
-      </form></center>
+    <div class="col-lg-12">
+      <center>
+        <form class="form-inline" action="/predict" method="post" enctype="multipart/form-data">
+          <center>
+            <h4>Enter the message here:</h4>
+          </center>
+          <textarea rows="5" cols="60" style="font-size: 12pt" name="message"></textarea><br>
+          <input type="submit" class="btn btn-success" value="Predict">
+        </form>
+      </center>
     </div>
-
-
-    <!-- <div class="col-lg-5" style="padding-top:30px">
-       <h3>Predicted Label : {{pred}}</h3>
-       <h3>This is likely{{is_phising}} a phishing message.</h3>
-    </div> -->
 
   </div>
 
 </body>
+
 </html>
