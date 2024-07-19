@@ -16,7 +16,7 @@ def predict():
     text = request.form.get('message') 
 
     # make inference
-    pred = make_inference(text).best_llm()
+    pred = make_inference(user_input=text).best_llm()
     # pred = make_inference(text).best_baseline()
 
     outcome = ""

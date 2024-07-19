@@ -7,6 +7,6 @@ RUN pip3 install -r requirements.txt
 
 COPY . .
 
-RUN export PYTHONPATH=${PYTHONPATH}:LLM_phishing_detection
+ENV PYTHONPATH="/LLM_PHISHING_DETECTION"
 
 ENTRYPOINT [ "python3", "src/main.py" ]

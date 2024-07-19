@@ -1,8 +1,8 @@
 from pathlib import Path
 import argparse
 
-from train import train_baselines, train_llms
-from infer import make_inference
+from src.train import train_baselines, train_llms
+from src.infer import make_inference
 
 
 def getArgs():

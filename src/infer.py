@@ -12,8 +12,8 @@ from transformers import (
     AutoTokenizer,
 )
 
-from preprocess import transform_df, encode_df, init_nltk
-from get_data import get_raw_data, train_val_test_split
+from src.preprocess import transform_df, encode_df, init_nltk
+from src.get_data import get_raw_data, train_val_test_split
 
 BEST_BASELINE_MODEL = {
     "NB": (MultinomialNB(), 300, "outputs/model/NB.pkl"),
@@ -43,8 +43,8 @@ class make_inference:
     def __init__(
         self,
         user_input: str,
-        label_col_name: str,
-        text_col_name: str,
+        label_col_name='gen_label',
+        text_col_name='Messages',
         dataset_name="data.csv",
     ):
         self.text_input = user_input

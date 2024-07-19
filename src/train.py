@@ -21,8 +21,8 @@ import time
 import pandas as pd
 import pickle
 
-from get_data import get_raw_data, train_val_test_split
-from utils_and_constants import (
+from src.get_data import get_raw_data, train_val_test_split
+from src.utils_and_constants import (
     SCORING,
     save_scores,
 )
