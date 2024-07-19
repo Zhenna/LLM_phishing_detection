@@ -17,7 +17,7 @@ def predict():
 
     # make inference
     pred = make_inference(user_input=text).best_llm()
-    # pred = make_inference(text).best_baseline()
+    # pred = make_inference(user_input=text).best_baseline()
 
     outcome = ""
     if pred == 0:
