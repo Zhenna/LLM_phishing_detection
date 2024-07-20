@@ -1,6 +1,6 @@
 # llm_phishing_detection
 
-This project aims to classify a text message into either `1` (phishing) or `0` (not phishing) categories by training several machine learning models with a csv dataset. Please refer to my blog post for a detailed walkthrough explanation: [Large Language Model Training Pipeline For NLP Text Classification]([URL to navigate](https://medium.com/towards-artificial-intelligence/large-language-model-training-pipeline-for-nlp-text-classification-43f1c3cfb358)). 
+This project aims to classify a text message into either `1` (phishing) or `0` (not phishing) categories by training several machine learning models with a csv dataset. Please refer to my blog post for a detailed walkthrough explanation: ([Large Language Model Training Pipeline For NLP Text Classification](https://medium.com/towards-artificial-intelligence/large-language-model-training-pipeline-for-nlp-text-classification-43f1c3cfb358)). 
 
 #### Dataset Info
 
